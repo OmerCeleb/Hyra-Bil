@@ -88,8 +88,18 @@ public class ContactMessageController {
 
     }
 
+    //*********************************************************************************************************
+    //!!! låt oss få det specifikt ContactMessage med en PathVariable
+    @GetMapping("/{id}")
+    public ResponseEntity<ContactMessageDTO> getMessageWithPath(@PathVariable("id") Long id) {
+        ContactMessage contactMessage = contactMessageService.getContactMessage(id);
+        ContactMessageDTO contactMessageDTO = contactMessageMapper.contactMessageToDTO(contactMessage);
+        return ResponseEntity.ok(contactMessageDTO);
+    }
+
+
     //!!getPageDTO
-    private Page<ContactMessageDTO> getPageDto(Page<ContactMessage> contactMessagePage){
+    private Page<ContactMessageDTO> getPageDto(Page<ContactMessage> contactMessagePage) {
         return contactMessagePage.map( //
                 contactMessageMapper::contactMessageToDTO);
     }
