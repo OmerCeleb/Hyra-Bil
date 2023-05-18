@@ -98,6 +98,16 @@ public class ContactMessageController {
     }
 
 
+    //!!! låt oss få det specifikt ContactMessage med en RequestParam
+    @GetMapping("/request")
+    public ResponseEntity<ContactMessageDTO> getMessageWithRequestParam(
+            @RequestParam("id") Long id) {
+        ContactMessage contactMessage = contactMessageService.getContactMessage(id);
+        ContactMessageDTO contactMessageDTO = contactMessageMapper.contactMessageToDTO(contactMessage);
+        return ResponseEntity.ok(contactMessageDTO);
+    }
+
+
     //!!getPageDTO
     private Page<ContactMessageDTO> getPageDto(Page<ContactMessage> contactMessagePage) {
         return contactMessagePage.map( //
