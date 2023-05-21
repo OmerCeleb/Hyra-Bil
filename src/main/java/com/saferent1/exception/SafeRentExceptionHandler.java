@@ -1,9 +1,14 @@
 package com.saferent1.exception;
 
 import com.saferent1.exception.message.ApiResponseError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.ConversionNotSupportedException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,9 +25,16 @@ public class SafeRentExceptionHandler extends ResponseEntityExceptionHandler {
     // för att ovirride de undantag som kan komma och för att ge svaret i den struktur jag vill ha.
 
 
+
+    Logger logger = LoggerFactory.getLogger(SafeRentExceptionHandler.class);
+
+
+
     private ResponseEntity<Object> buildResponseEntity(ApiResponseError error) {
+        logger.error(error.getMessage());
         return new ResponseEntity<>(error, error.getStatus());
     }
+
 
     @ExceptionHandler(ResourceNotFoundException.class)
     protected ResponseEntity<Object> handleResourceNotFoundException(
@@ -53,6 +65,38 @@ public class SafeRentExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(error);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        ApiResponseError error = new ApiResponseError(HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                request.getDescription(false));
+
+
+        return buildResponseEntity(error);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleConversionNotSupported(ConversionNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        ApiResponseError error = new ApiResponseError(HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(),
+                request.getDescription(false));
+
+
+        return buildResponseEntity(error);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ApiResponseError error = new ApiResponseError(HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                request.getDescription(false));
+
+
+        return buildResponseEntity(error);
+    }
+
 
     // Vi kommer att ha följande binära generiska undantagsfångare. Om vi skrev upp dem, om vi tog ner resten, skrev vi ner dem;
     // Metoderna skulle inte ha någon betydelse eftersom överordnade klasser skulle fånga alla undantag och de skulle ogiltigförklaras. Så dessa två borde vara längst ner.
@@ -66,6 +110,7 @@ public class SafeRentExceptionHandler extends ResponseEntityExceptionHandler {
                 request.getDescription(false));
         return buildResponseEntity(error);
     }
+
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<Object> handleGeneralException(Exception ex, WebRequest request) {
