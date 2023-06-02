@@ -25,14 +25,21 @@ public class SafeRentExceptionHandler extends ResponseEntityExceptionHandler {
     // för att ovirride de undantag som kan komma och för att ge svaret i den struktur jag vill ha.
 
 
-
     Logger logger = LoggerFactory.getLogger(SafeRentExceptionHandler.class);
-
 
 
     private ResponseEntity<Object> buildResponseEntity(ApiResponseError error) {
         logger.error(error.getMessage());
         return new ResponseEntity<>(error, error.getStatus());
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    protected ResponseEntity<Object> handleConflictException(
+            ConflictException ex, WebRequest request) {
+
+        ApiResponseError error = new ApiResponseError(HttpStatus.CONFLICT,
+                ex.getMessage(), request.getDescription(false));
+        return buildResponseEntity(error);
     }
 
 
