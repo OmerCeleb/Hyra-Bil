@@ -3,17 +3,20 @@ package com.saferent1.service;
 import com.saferent1.domain.Role;
 import com.saferent1.domain.User;
 import com.saferent1.domain.enums.RoleType;
+import com.saferent1.dto.UserDTO;
 import com.saferent1.dto.request.RegisterRequest;
 import com.saferent1.exception.ConflictException;
 import com.saferent1.exception.ResourceNotFoundException;
 import com.saferent1.exception.message.ErrorMessage;
+import com.saferent1.mapper.UserMapper;
 import com.saferent1.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.saferent1.security.SecurityUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -22,12 +25,14 @@ public class UserService {
 
     private UserRepository userRepository;
 
+    private UserMapper userMapper;
     private RoleService roleService;
 
     private PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RoleService roleService,@Lazy PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, RoleService roleService, @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -62,7 +67,7 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
         user.setPassword(encodedPassword);
-        user.setZipCode(user.getZipCode());
+        user.setZipCode(request.getZipCode());
         user.setPhoneNumber(request.getPhoneNumber());
         user.setRoles(roles);
 
@@ -70,4 +75,31 @@ public class UserService {
 
 
     }
+
+
+    //*************************************************************************
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        List<UserDTO> userDTOS = userMapper.map(users);
+
+        return userDTOS;
+    }
+
+    //*************************************************************************
+
+    public UserDTO getPrincipal() {
+        User user = getCurrentUser();
+        UserDTO userDTO = userMapper.userToUserDTO(user);
+        return userDTO;
+    }
+
+    public User getCurrentUser() {
+        String email = SecurityUtils.getCurrentUserLogin().orElseThrow(() ->
+                new ResourceNotFoundException(ErrorMessage.PRINCIPAL_FOUND_MESSAGE));
+
+        User user = getUserByEmail(email);
+        return user;
+
+    }
+//**************************
 }

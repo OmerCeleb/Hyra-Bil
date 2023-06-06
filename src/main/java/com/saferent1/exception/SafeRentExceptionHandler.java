@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.naming.AuthenticationException;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,29 @@ public class SafeRentExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getMessage(), request.getDescription(false));
         return buildResponseEntity(error);
     }
+
+
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<Object> handleAccesDeniedException(
+            AccessDeniedException ex, WebRequest request) {
+
+        ApiResponseError error = new ApiResponseError(HttpStatus.FORBIDDEN,
+                ex.getMessage(),
+                request.getDescription(false));
+        return buildResponseEntity(error);
+    }
+
+
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<Object> handleAuthenticationException(
+            AuthenticationException ex, WebRequest request) {
+
+        ApiResponseError error = new ApiResponseError(HttpStatus.BAD_REQUEST,
+                ex.getMessage(), request.getDescription(false));
+        return buildResponseEntity(error);
+    }
+
 
 
     @ExceptionHandler(ResourceNotFoundException.class)
