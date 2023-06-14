@@ -38,9 +38,9 @@ public class UserJwtController {
     //!!! Register
     @PostMapping("/register")
     public ResponseEntity<SfResponse> registerUser(@Valid
-                                                   @RequestBody RegisterRequest request) {
+                                                   @RequestBody RegisterRequest registerRequest) {
 
-        userService.saveUser(request);
+        userService.saveUser(registerRequest);
         SfResponse response = new SfResponse();
         response.setMessage(ResponseMessage.REGISTER_RESPONSE_MESSAGE);
         response.setSucces(true);

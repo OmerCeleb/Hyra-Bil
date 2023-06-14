@@ -30,7 +30,8 @@ public class UserService {
 
     private PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, RoleService roleService, @Lazy PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleService roleService,
+                       @Lazy PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.roleService = roleService;

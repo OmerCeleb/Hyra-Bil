@@ -3,6 +3,7 @@ package com.saferent1.controller;
 import com.saferent1.domain.User;
 import com.saferent1.dto.UserDTO;
 import com.saferent1.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     //*************************************************************************************
-     //!!! Informationen om användaren som loggade in på systemet ...
+    //!!! Informationen om användaren som loggade in på systemet ...
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
     public ResponseEntity<UserDTO> getUser() {
@@ -40,5 +41,9 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
 
+
+    @GetMapping("/auth/pages")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<UserDTO>>
 
 }
