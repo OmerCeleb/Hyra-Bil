@@ -5,6 +5,8 @@ import com.saferent1.domain.User;
 import com.saferent1.domain.enums.RoleType;
 import com.saferent1.dto.UserDTO;
 import com.saferent1.dto.request.RegisterRequest;
+import com.saferent1.dto.request.UpdatePasswordRequest;
+import com.saferent1.exception.BadRequestException;
 import com.saferent1.exception.ConflictException;
 import com.saferent1.exception.ResourceNotFoundException;
 import com.saferent1.exception.message.ErrorMessage;
@@ -12,6 +14,8 @@ import com.saferent1.mapper.UserMapper;
 import com.saferent1.repository.UserRepository;
 import com.saferent1.security.SecurityUtils;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -102,5 +106,63 @@ public class UserService {
         return user;
 
     }
-//**************************
+
+    //**************************
+
+    public Page<UserDTO> getUserByPage(Pageable pageable) {
+
+        Page<User> userPage = userRepository.findAll(pageable);
+        return getUserDTOPage(userPage);
+
+    }
+
+    private Page<UserDTO> getUserDTOPage(Page<User> userPage) {
+        return userPage.map(
+                user -> userMapper.userToUserDTO(user)
+        );
+    }
+
+    //*************************************************************************
+
+    public UserDTO getUserById(Long id) {
+
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(
+                        String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
+
+        return userMapper.userToUserDTO(user);
+    }
+
+
+    //*************************************************************************
+
+    public void updatePassword(UpdatePasswordRequest passwordRequest) {
+
+        User user = getCurrentUser();
+
+        // !!! builtIn??
+        if (user.getBuiltIn()) {
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        // !!! Är det gamla lösenordet som angetts i formulärdelen korrekt?
+        if (!passwordEncoder.matches(passwordRequest.getOldPassword(), user.getPassword())) {
+            throw new BadRequestException(ErrorMessage.PASSWORD_NOT_MATCHED);
+        }
+
+        // !!! nytt inkommande lösenord kommer att kodas
+        String hashedPassword = passwordEncoder.encode(passwordRequest.getNewPassword());
+        user.setPassword(hashedPassword);
+
+        userRepository.save(user);
+
+
+    }
+
+    //*************************************************************************
+
+
+
+
+
 }
