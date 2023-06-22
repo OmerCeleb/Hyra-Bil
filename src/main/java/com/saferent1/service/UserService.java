@@ -6,6 +6,7 @@ import com.saferent1.domain.enums.RoleType;
 import com.saferent1.dto.UserDTO;
 import com.saferent1.dto.request.RegisterRequest;
 import com.saferent1.dto.request.UpdatePasswordRequest;
+import com.saferent1.dto.request.UserUpdateRequest;
 import com.saferent1.exception.BadRequestException;
 import com.saferent1.exception.ConflictException;
 import com.saferent1.exception.ResourceNotFoundException;
@@ -158,11 +159,37 @@ public class UserService {
 
 
     }
-
     //*************************************************************************
 
+    public void updateUser(UserUpdateRequest userUpdateRequest) {
+
+        User user = getCurrentUser();
+
+        // !!! builtIn??
+        if (user.getBuiltIn()) {
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        // !!! email kontrol?
+        boolean emailExist = userRepository.existsByEmail(userUpdateRequest.getEmail());
+
+        if (emailExist && !userUpdateRequest.getEmail().equals(user.getEmail())) {
+            throw new ConflictException(
+                    String.format(ErrorMessage.EMAIL_ALDREADY_EXIST_MESSAGE, userUpdateRequest.getEmail()));
 
 
+        }
+
+        userRepository.update(user.getId(),
+                userUpdateRequest.getFirstName(),
+                userUpdateRequest.getLastName(),
+                userUpdateRequest.getPhoneNumber(),
+                userUpdateRequest.getEmail(),
+                userUpdateRequest.getAddress(),
+                userUpdateRequest.getZipCode());
+
+
+    }
 
 
 }
