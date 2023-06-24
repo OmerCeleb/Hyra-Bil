@@ -36,6 +36,7 @@ public class SecurityConfig {
                 antMatchers("/login",
                         "/register",
                         "/",
+                        "/files/download/**",
                         "/index.html").
                 permitAll().anyRequest().authenticated();
 
@@ -46,14 +47,14 @@ public class SecurityConfig {
 
     // !!! Encoder
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 
 
     //Provider
     @Bean
-    DaoAuthenticationProvider authenticationProvider(){
+    DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -63,14 +64,14 @@ public class SecurityConfig {
 
     //!!!AuthenticationManager
     @Bean
-    AuthenticationManager authManager(HttpSecurity http) throws Exception{
+    AuthenticationManager authManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class).
                 authenticationProvider(authenticationProvider()).build();
 
     }
 
     @Bean
-    public AuthTokenFilter authTokenFilter(){
+    public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter();
     }
 

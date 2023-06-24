@@ -9,7 +9,8 @@ public class ErrorMessage {
     public final static String EMAIL_ALDREADY_EXIST_MESSAGE = "E-postameddelande: %s finns redan";
     public final static String PRINCIPAL_FOUND_MESSAGE = "Användaren hittades inte";
     public final static String NOT_PERMITTED_METHOD_MESSAGE = "Du har ingen behörighet att ändra denna data";
-    public final static String PASSWORD_NOT_MATCHED = "Dina lösenord matchas inte.";
+    public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Dina lösenord matchas inte.";
+    public final static String IMAGE_NOT_FOUND_MESSAGE = "Bildfil med id %s hittades inte";
 
 
 }
