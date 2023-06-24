@@ -133,4 +133,19 @@ public class UserController {
     }
 
 
+    //*************************************************************************************
+    //Delete User
+    @DeleteMapping("/{id}/auth")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SfResponse> deleteUser(@PathVariable Long id) {
+        userService.removeUserById(id);
+
+        SfResponse response = new SfResponse();
+        response.setMessage(ResponseMessage.USER_DELETE_RESPONSE_MESSAGE);
+        response.setSucces(true);
+
+        return ResponseEntity.ok(response);
+    }
+
+
 }

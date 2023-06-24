@@ -39,7 +39,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
         // 2 query
     Optional<User> findById(Long id);
 
-    @EntityGraph(attributePaths = "roles")
+    @EntityGraph(attributePaths = "id")
     Optional<User> findUserById (Long id);
 
 

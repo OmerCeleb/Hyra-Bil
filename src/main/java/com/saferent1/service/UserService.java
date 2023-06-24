@@ -224,6 +224,7 @@ public class UserService {
         Set<String> userStrRoles = adminUserUpdateRequest.getRoles();
 
         Set<Role> roles = convertRoles(userStrRoles);
+
         user.setFirstName(adminUserUpdateRequest.getFirstName());
         user.setLastName(adminUserUpdateRequest.getLastName());
         user.setEmail(adminUserUpdateRequest.getEmail());
@@ -266,6 +267,19 @@ public class UserService {
                         String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
 
         return user;
+
+    }
+
+    public void removeUserById(Long id) {
+
+        User user = getById(id);
+
+        //!!!builtIn?
+        if (user.getBuiltIn()) {
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        userRepository.deleteById(id);
 
     }
 }
