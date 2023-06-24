@@ -35,7 +35,7 @@ public class UserUpdateRequest {
 
     @Pattern(regexp = "^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$", //(541) 317-8828
             message = "Ange ett giltigt telefonnummer")
-    @Size(min = 14, max = 14)
+    @Size(max = 14)
     @NotBlank(message = "Ange ditt telefonnumret")
     private String phoneNumber;
 

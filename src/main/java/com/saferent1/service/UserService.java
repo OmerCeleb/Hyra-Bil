@@ -4,6 +4,7 @@ import com.saferent1.domain.Role;
 import com.saferent1.domain.User;
 import com.saferent1.domain.enums.RoleType;
 import com.saferent1.dto.UserDTO;
+import com.saferent1.dto.request.AdminUserUpdateRequest;
 import com.saferent1.dto.request.RegisterRequest;
 import com.saferent1.dto.request.UpdatePasswordRequest;
 import com.saferent1.dto.request.UserUpdateRequest;
@@ -192,4 +193,79 @@ public class UserService {
     }
 
 
+    public void updateUserAuth(Long id, AdminUserUpdateRequest adminUserUpdateRequest) {
+
+        User user = getById(id);
+
+        //!!!builtIn?
+        if (user.getBuiltIn()) {
+            throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        // !!! email kontrol?
+        boolean emailExist = userRepository.existsByEmail(adminUserUpdateRequest.getEmail());
+
+        if (emailExist && !adminUserUpdateRequest.getEmail().equals(user.getEmail())) {
+            throw new ConflictException(
+                    String.format(ErrorMessage.EMAIL_ALDREADY_EXIST_MESSAGE, adminUserUpdateRequest.getEmail()));
+
+        }
+
+        //!!! Lösenordet kontrol?
+        if (adminUserUpdateRequest.getPassword() == null) {
+            adminUserUpdateRequest.setPassword(user.getPassword());
+        } else {
+            String encodedPassword =
+                    passwordEncoder.encode(adminUserUpdateRequest.getPassword());
+            adminUserUpdateRequest.setPassword(encodedPassword);
+        }
+
+        //!!! Role
+        Set<String> userStrRoles = adminUserUpdateRequest.getRoles();
+
+        Set<Role> roles = convertRoles(userStrRoles);
+        user.setFirstName(adminUserUpdateRequest.getFirstName());
+        user.setLastName(adminUserUpdateRequest.getLastName());
+        user.setEmail(adminUserUpdateRequest.getEmail());
+        user.setPassword(adminUserUpdateRequest.getPassword());
+        user.setPhoneNumber(adminUserUpdateRequest.getPhoneNumber());
+        user.setAddress(adminUserUpdateRequest.getAddress());
+        user.setZipCode(adminUserUpdateRequest.getZipCode());
+        user.setBuiltIn(adminUserUpdateRequest.getBuiltIn());
+        user.setRoles(roles);
+
+        userRepository.save(user);
+    }
+
+    private Set<Role> convertRoles(Set<String> pRoles) { //pRoles = {"Kund","Administratör"}
+        Set<Role> roles = new HashSet<>();
+
+        if (pRoles == null) {
+            Role userRole = roleService.findByType(RoleType.ROLE_CUSTOMER);
+            roles.add(userRole);
+        } else {
+            pRoles.forEach(roleStr -> {
+                if (roleStr.equals(RoleType.ROLE_ADMIN.getName())) {
+                    Role adminRole = roleService.findByType(RoleType.ROLE_ADMIN);
+                    roles.add(adminRole);
+                } else {
+                    Role userRole = roleService.findByType(RoleType.ROLE_CUSTOMER);
+                    roles.add(userRole);
+                }
+            });
+        }
+
+        return roles;
+
+    }
+
+
+    private User getById(Long id) {
+        User user = userRepository.findUserById(id).orElseThrow(() ->
+                new ResourceNotFoundException(
+                        String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
+
+        return user;
+
+    }
 }

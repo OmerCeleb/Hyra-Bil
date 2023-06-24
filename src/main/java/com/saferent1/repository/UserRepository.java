@@ -39,6 +39,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
         // 2 query
     Optional<User> findById(Long id);
 
+    @EntityGraph(attributePaths = "roles")
+    Optional<User> findUserById (Long id);
+
+
+
+
+
+
+
 
     @Modifying
     @Query("UPDATE User u SET u.firstName=:firstName, u.lastName=:lastName,u.phoneNumber=:phoneNumber,u.email=:email,u.address=:address,u.zipCode=:zipCode WHERE u.id=:id")
@@ -49,5 +58,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 @Param("email") String email,
                 @Param("address") String address,
                 @Param("zipCode") String zipCode);
+
+
+
+
+
 
 }

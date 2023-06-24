@@ -1,28 +1,23 @@
 package com.saferent1.dto.request;
 
-import com.saferent1.domain.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
 
+public class AdminUserUpdateRequest {
 
     @Size(max = 50)
     @NotBlank(message = "Ange ditt förnamn")
@@ -55,4 +50,8 @@ public class RegisterRequest {
     @NotBlank(message = "Ange ditt postnummer")
     private String zipCode;
 
+
+    private Boolean builtIn;
+
+    private Set<String> roles;
 }
