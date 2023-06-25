@@ -2,6 +2,7 @@ package com.saferent1.service;
 
 import com.saferent1.domain.ImageData;
 import com.saferent1.domain.ImageFile;
+import com.saferent1.dto.ImageFileDTO;
 import com.saferent1.exception.ResourceNotFoundException;
 import com.saferent1.exception.message.ErrorMessage;
 import com.saferent1.repository.ImageFileRepository;
@@ -10,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -50,5 +52,10 @@ public class ImageFileService {
 
         return imageFile;
 
+    }
+
+    public List<ImageFileDTO> getAllImages() {
+
+        imageFileRepository.findAll()
     }
 }

@@ -11,5 +11,4 @@ public class ResponseMessage {
     public final static String IMAGE_SAVED_RESPONSE_MESSAGE = "Bildfilen har sparats";
 
 
-
 }
