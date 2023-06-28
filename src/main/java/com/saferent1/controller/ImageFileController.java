@@ -4,6 +4,7 @@ import com.saferent1.domain.ImageFile;
 import com.saferent1.dto.ImageFileDTO;
 import com.saferent1.dto.response.ImageSavedResponse;
 import com.saferent1.dto.response.ResponseMessage;
+import com.saferent1.dto.response.SfResponse;
 import com.saferent1.service.ImageFileService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -81,6 +82,22 @@ public class ImageFileController {
         List<ImageFileDTO> imageFileDTOS = imageFileService.getAllImages();
 
         return ResponseEntity.ok(imageFileDTOS);
+    }
+
+
+    //*******************************************************************************
+    //DeleteImaage
+
+    @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SfResponse> deleteImageFile(@PathVariable String id) {
+
+        imageFileService.removeById(id);
+
+        SfResponse response = new SfResponse(ResponseMessage.IMAGE_DELETED_RESPONSE_MESSAGE, true);
+
+        return ResponseEntity.ok(response);
+
     }
 
 
