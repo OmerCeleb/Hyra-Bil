@@ -9,10 +9,12 @@ import com.saferent1.repository.ImageFileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ImageFileService {
@@ -56,6 +58,22 @@ public class ImageFileService {
 
     public List<ImageFileDTO> getAllImages() {
 
-        imageFileRepository.findAll()
+        List<ImageFile> imageFileDTOS = imageFileRepository.findAll();
+        // image1 : localhost8080/files/download/id
+
+        List<ImageFileDTO> imageFileDTOS1 = imageFileDTOS.stream().map(inFile -> {
+            // URL skappas
+            String imageUrl = ServletUriComponentsBuilder.
+                    fromCurrentContextPath().//localhost:8080
+                            path("files/download").//localhost:8080/files/download
+                            path(inFile.getId()).toUriString();//localhost:8080/files/download/id
+
+            return new ImageFileDTO(inFile.getName(),
+                    imageUrl,
+                    inFile.getType(),
+                    inFile.getLength());
+        }).collect(Collectors.toList());
+
+        return imageFileDTOS1;
     }
 }
