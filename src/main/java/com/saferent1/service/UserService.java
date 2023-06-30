@@ -149,7 +149,7 @@ public class UserService {
 
         // !!! Är det gamla lösenordet som angetts i formulärdelen korrekt?
         if (!passwordEncoder.matches(passwordRequest.getOldPassword(), user.getPassword())) {
-            throw new BadRequestException(ErrorMessage.PASSWORD_NOT_MATCHED);
+            throw new BadRequestException(ErrorMessage.PASSWORD_NOT_MATCHED_MESSAGE);
         }
 
         // !!! nytt inkommande lösenord kommer att kodas
