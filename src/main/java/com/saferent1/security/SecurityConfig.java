@@ -38,6 +38,7 @@ public class SecurityConfig {
                         "/",
                         "/files/download/**",
                         "/files/display/**",
+                        "/car/visitors/**",
                         "/index.html").
                 permitAll().anyRequest().authenticated();
 

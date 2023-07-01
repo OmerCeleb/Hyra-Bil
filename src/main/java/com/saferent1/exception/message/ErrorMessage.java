@@ -11,6 +11,7 @@ public class ErrorMessage {
     public final static String NOT_PERMITTED_METHOD_MESSAGE = "Du har ingen behörighet att ändra denna data";
     public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Dina lösenord matchas inte.";
     public final static String IMAGE_NOT_FOUND_MESSAGE = "Bildfil med id %s hittades inte";
+    public final static String IMAGE_USED_MESSAGE = "Bildfilen använde en annan bil";
 
 
 }

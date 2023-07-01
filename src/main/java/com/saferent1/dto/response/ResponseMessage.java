@@ -11,5 +11,7 @@ public class ResponseMessage {
     public final static String IMAGE_SAVED_RESPONSE_MESSAGE = "Bildfilen har sparats";
     public final static String IMAGE_DELETED_RESPONSE_MESSAGE = "Bildfilen har raderats";
 
+    public final static String CAR_SAVED_RESPONSE_MESSAGE = "Car har sparats";
+
 
 }
