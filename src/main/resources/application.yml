@@ -52,7 +52,7 @@ management: #actuator
 saferent1:
   app:
     jwtSecret: safeRent1@!10
-    jwtExpirationMs: 86400000
+    jwtExpirationMs: 86300000
 
 info:
   application:

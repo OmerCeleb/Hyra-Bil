@@ -136,8 +136,7 @@ public class CarService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
-
-
+        carRepository.delete(car);
 
 
     }
