@@ -12,6 +12,7 @@ public class ErrorMessage {
     public final static String PASSWORD_NOT_MATCHED_MESSAGE = "Dina lösenord matchas inte.";
     public final static String IMAGE_NOT_FOUND_MESSAGE = "Bildfil med id %s hittades inte";
     public final static String IMAGE_USED_MESSAGE = "Bildfilen använde en annan bil";
+    public final static String RESERVATION_TIME_INCORRECT_MESSAGE = "Bokningstid för hämtning eller avgångstid är inte korrekt";
 
 
 }

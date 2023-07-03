@@ -140,4 +140,11 @@ public class CarService {
 
 
     }
+
+    public Car getCarById(Long carId) {
+
+        return carRepository.findById(carId).orElseThrow(() -> new ResourceNotFoundException(
+                String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, carId)));
+
+    }
 }
