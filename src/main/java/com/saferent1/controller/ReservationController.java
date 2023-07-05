@@ -6,6 +6,7 @@ import com.saferent1.domain.User;
 import com.saferent1.dto.CarDTO;
 import com.saferent1.dto.ReservationDTO;
 import com.saferent1.dto.request.ReservationRequest;
+import com.saferent1.dto.request.ReservationUpdateRequest;
 import com.saferent1.dto.response.CarAvailabilityResponse;
 import com.saferent1.dto.response.ResponseMessage;
 import com.saferent1.dto.response.SfResponse;
@@ -144,22 +145,23 @@ public class ReservationController {
 
     //****************************************************************************************'''''''
     //update :(
+    @PutMapping("admin/auth")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SfResponse> updateReservation(
+            @RequestParam("carId") Long carId,
+            @RequestParam("reservationId") Long reservationId,
+            @Valid @RequestBody ReservationUpdateRequest reservationUpdateRequest) {
+
+        Car car = carService.getCarById(carId);
+
+        reservationService.updateReservation(reservationId, car, reservationUpdateRequest);
+
+        SfResponse response = new SfResponse(ResponseMessage.RESERVATION_UPDATED_RESPONSE_MESSAGE, true);
 
 
+        return ResponseEntity.ok(response);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
 
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -36,6 +37,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @EntityGraph(attributePaths = {"car", "car.image"})
     Page<Reservation> findAll(Pageable page);
+
+    @EntityGraph(attributePaths = {"car", "car.image", "user"})
+    Optional<Reservation> findById(Long id);
 
 
 }

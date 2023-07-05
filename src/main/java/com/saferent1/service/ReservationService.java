@@ -6,7 +6,9 @@ import com.saferent1.domain.User;
 import com.saferent1.domain.enums.ReservationStatus;
 import com.saferent1.dto.ReservationDTO;
 import com.saferent1.dto.request.ReservationRequest;
+import com.saferent1.dto.request.ReservationUpdateRequest;
 import com.saferent1.exception.BadRequestException;
+import com.saferent1.exception.ResourceNotFoundException;
 import com.saferent1.exception.message.ErrorMessage;
 import com.saferent1.mapper.ReservationMapper;
 import com.saferent1.repository.ReservationRepository;
@@ -79,7 +81,7 @@ public class ReservationService {
 
     //!!! Är fordonet tillgängligt?
     public boolean checkCarAvailability(Car car, LocalDateTime pickUpTime,
-                                         LocalDateTime dropOfTime) {
+                                        LocalDateTime dropOfTime) {
 
         List<Reservation> existReservations = getConflictReservation(car, pickUpTime, dropOfTime);
 
@@ -89,7 +91,7 @@ public class ReservationService {
 
     // !!! prisberäkning
     public Double getTotalPrice(Car car, LocalDateTime pickUpTime,
-                                 LocalDateTime dropOfTime) {
+                                LocalDateTime dropOfTime) {
         Long minutes = ChronoUnit.MINUTES.between(pickUpTime, dropOfTime);
         double hours = Math.ceil(minutes / 60.0);
 
@@ -99,7 +101,7 @@ public class ReservationService {
 
     // !!! connflict?
     public List<Reservation> getConflictReservation(Car car, LocalDateTime pickUpTime,
-                                                     LocalDateTime dropOfTime) {
+                                                    LocalDateTime dropOfTime) {
 
         if (pickUpTime.isAfter(dropOfTime)) {
             throw new BadRequestException(ErrorMessage.RESERVATION_TIME_INCORRECT_MESSAGE);
@@ -124,9 +126,24 @@ public class ReservationService {
 
     public Page<ReservationDTO> getAllWithPage(Pageable pageable) {
 
-      Page<Reservation> reservationPage =  reservationRepository.findAll(pageable);
+        Page<Reservation> reservationPage = reservationRepository.findAll(pageable);
 
-      return reservationPage.map(reservationMapper::reservationToReservationDTO);
+        return reservationPage.map(reservationMapper::reservationToReservationDTO);
 
+    }
+
+    public void updateReservation(Long reservationId, Car car, ReservationUpdateRequest reservationUpdateRequest) {
+
+
+
+    }
+
+    public Reservation getById(Long id) {
+
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, id)));
+
+
+        return reservation;
     }
 }

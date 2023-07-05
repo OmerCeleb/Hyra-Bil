@@ -15,6 +15,8 @@ public class ResponseMessage {
     public final static String CAR_DELETED_RESPONSE_MESSAGE = "Bil har raderats";
     public final static String CAR_AVAILABLE_MESSAGE = "Biltillgänglighet beräknad";
     public final static String RESERVATION_CREATED_RESPONSE_MESSAGE = "Bokningen har skapats";
+    public final static String RESERVATION_UPDATED_RESPONSE_MESSAGE = "Bokningen har ändrats";
+    public final static String RESERVATION_DELETED_RESPONSE_MESSAGE = "Bokningen har raderats";
 
 
 }
