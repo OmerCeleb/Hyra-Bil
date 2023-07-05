@@ -12,7 +12,9 @@ public class ResponseMessage {
     public final static String IMAGE_DELETED_RESPONSE_MESSAGE = "Bildfilen har raderats";
     public final static String CAR_SAVED_RESPONSE_MESSAGE = "Car har sparats";
     public final static String CAR_UPDATE_RESPONSE_MESSAGE = "Car har ändrats";
-    public final static String CAR_DELETED_RESPONSE_MESSAGE = "Car har raderats";
+    public final static String CAR_DELETED_RESPONSE_MESSAGE = "Bil har raderats";
+    public final static String CAR_AVAILABLE_MESSAGE = "Biltillgänglighet beräknad";
     public final static String RESERVATION_CREATED_RESPONSE_MESSAGE = "Bokningen har skapats";
+
 
 }

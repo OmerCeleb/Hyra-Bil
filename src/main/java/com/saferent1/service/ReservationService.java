@@ -4,11 +4,14 @@ import com.saferent1.domain.Car;
 import com.saferent1.domain.Reservation;
 import com.saferent1.domain.User;
 import com.saferent1.domain.enums.ReservationStatus;
+import com.saferent1.dto.ReservationDTO;
 import com.saferent1.dto.request.ReservationRequest;
 import com.saferent1.exception.BadRequestException;
 import com.saferent1.exception.message.ErrorMessage;
 import com.saferent1.mapper.ReservationMapper;
 import com.saferent1.repository.ReservationRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -54,7 +57,7 @@ public class ReservationService {
     }
 
     // !!! Är de begärda bokningsdatumen korrekta?
-    private void checkReservationTimeIsCorrect(LocalDateTime pickUpTime, LocalDateTime dropOfTime) {
+    public void checkReservationTimeIsCorrect(LocalDateTime pickUpTime, LocalDateTime dropOfTime) {
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -75,7 +78,7 @@ public class ReservationService {
     }
 
     //!!! Är fordonet tillgängligt?
-    private boolean checkCarAvailability(Car car, LocalDateTime pickUpTime,
+    public boolean checkCarAvailability(Car car, LocalDateTime pickUpTime,
                                          LocalDateTime dropOfTime) {
 
         List<Reservation> existReservations = getConflictReservation(car, pickUpTime, dropOfTime);
@@ -85,7 +88,7 @@ public class ReservationService {
     }
 
     // !!! prisberäkning
-    private Double getTotalPrice(Car car, LocalDateTime pickUpTime,
+    public Double getTotalPrice(Car car, LocalDateTime pickUpTime,
                                  LocalDateTime dropOfTime) {
         Long minutes = ChronoUnit.MINUTES.between(pickUpTime, dropOfTime);
         double hours = Math.ceil(minutes / 60.0);
@@ -95,7 +98,7 @@ public class ReservationService {
     }
 
     // !!! connflict?
-    private List<Reservation> getConflictReservation(Car car, LocalDateTime pickUpTime,
+    public List<Reservation> getConflictReservation(Car car, LocalDateTime pickUpTime,
                                                      LocalDateTime dropOfTime) {
 
         if (pickUpTime.isAfter(dropOfTime)) {
@@ -112,4 +115,18 @@ public class ReservationService {
     }
 
 
+    public List<ReservationDTO> getAllReservations() {
+
+        List<Reservation> reservations = reservationRepository.findAll();
+        return reservationMapper.map(reservations);
+
+    }
+
+    public Page<ReservationDTO> getAllWithPage(Pageable pageable) {
+
+      Page<Reservation> reservationPage =  reservationRepository.findAll(pageable);
+
+      return reservationPage.map(reservationMapper::reservationToReservationDTO);
+
+    }
 }
