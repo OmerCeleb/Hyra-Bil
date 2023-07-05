@@ -164,7 +164,39 @@ public class ReservationController {
     }
 
     //****************************************************************************************'''''''
-    //!!! getReservationById
+    //!!! getReservationById - ADMIN
+    @GetMapping("/{id}/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ReservationDTO> getReservationById(@PathVariable Long id) {
+
+        ReservationDTO reservationDTO = reservationService.getReservationsDTO(id);
+
+        return ResponseEntity.ok(reservationDTO);
+
+    }
+
+    //****************************************************************************************'''''''
+    //!!! getReservationForSpecificUser - ADMIN
+    @GetMapping("/admin/auth/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<ReservationDTO>> getAllUserReservations(
+            @RequestParam("userId") Long userId,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sort") String prop,
+            @RequestParam(value = "direction",
+                    required = false,
+                    defaultValue = "DESC") Sort.Direction direction
+    ) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, prop));
+
+        User user = userService.getById(userId);
+
+        Page<ReservationDTO> reservationDTOS = reservationService.findReservationPageByuser(user, pageable);
+
+        return ResponseEntity.ok(reservationDTOS);
+    }
 
 
 }

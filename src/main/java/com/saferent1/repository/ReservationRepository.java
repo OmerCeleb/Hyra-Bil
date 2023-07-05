@@ -2,6 +2,7 @@ package com.saferent1.repository;
 
 import ch.qos.logback.core.read.ListAppender;
 import com.saferent1.domain.Reservation;
+import com.saferent1.domain.User;
 import com.saferent1.domain.enums.ReservationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,5 +42,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @EntityGraph(attributePaths = {"car", "car.image", "user"})
     Optional<Reservation> findById(Long id);
 
-
+    @EntityGraph(attributePaths = {"car", "car.image", "user"})
+    Page<Reservation> findAllByUser(User user, Pageable pageable);
 }

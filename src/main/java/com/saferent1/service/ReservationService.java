@@ -188,4 +188,19 @@ public class ReservationService {
 
         return reservation;
     }
+
+    public ReservationDTO getReservationsDTO(Long id) {
+
+        Reservation reservation = getById(id);
+
+        return reservationMapper.reservationToReservationDTO(reservation);
+
+    }
+
+    public Page<ReservationDTO> findReservationPageByuser(User user, Pageable pageable) {
+
+        Page<Reservation> reservationPage = reservationRepository.findAllByUser(user, pageable);
+
+        return reservationPage.map(reservationMapper::reservationToReservationDTO);
+    }
 }
