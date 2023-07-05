@@ -18,7 +18,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "JOIN FETCH Car c on r.car=c.id WHERE " +
             "c.id=:carId and (r.status not in :status) and : pickUpTime BETWEEN r.pickUpTime and r.dropOfTime " +
             "or " +
-            "c.id=:carId and (r.status not in :status) and dropOfTime BETWEEN r.pickUpTime and r.dropOfTime " +
+            "c.id=:carId and (r.status not in :status) and : dropOfTime BETWEEN r.pickUpTime and r.dropOfTime " +
             "or " +
             "c.id=:carId and (r.status not in :status) and (r.pickUpTime BETWEEN :pickUpTime and :dropOfTime)")
     List<Reservation> checkCarStatus(@Param("carId") Long carId,

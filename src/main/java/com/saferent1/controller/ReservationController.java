@@ -51,5 +51,25 @@ public class ReservationController {
 
     }
 
+    //****************************************************************************************'''''''
+    //adminMakeReservation
+    @PostMapping("/add/auth")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SfResponse> addReservation(
+            @RequestParam("carId") Long carId,
+            @Valid @RequestBody ReservationRequest reservationRequest,
+            @RequestParam("userId") Long userId) {
+
+        Car car = carService.getCarById(carId);
+        User user = userService.getById(userId);
+
+        reservationService.createReservation(reservationRequest, user, car);
+
+        SfResponse response = new SfResponse(
+                ResponseMessage.RESERVATION_CREATED_RESPONSE_MESSAGE, true);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
 
 }

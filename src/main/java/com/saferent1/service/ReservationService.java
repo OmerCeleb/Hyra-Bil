@@ -7,10 +7,12 @@ import com.saferent1.domain.enums.ReservationStatus;
 import com.saferent1.dto.request.ReservationRequest;
 import com.saferent1.exception.BadRequestException;
 import com.saferent1.exception.message.ErrorMessage;
+import com.saferent1.mapper.ReservationMapper;
 import com.saferent1.repository.ReservationRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -18,13 +20,36 @@ public class ReservationService {
 
 
     private final ReservationRepository reservationRepository;
+    private final ReservationMapper reservationMapper;
 
-    public ReservationService(ReservationRepository reservationRepository) {
+    public ReservationService(ReservationRepository reservationRepository, ReservationMapper reservationMapper) {
         this.reservationRepository = reservationRepository;
+        this.reservationMapper = reservationMapper;
     }
 
     public void createReservation(ReservationRequest reservationRequest, User user, Car car) {
 
+        checkReservationTimeIsCorrect(reservationRequest.getPickUpTime(), reservationRequest.getDropOfTime());
+
+        boolean carStatus = checkCarAvailability(car, reservationRequest.getPickUpTime(), reservationRequest.getDropOfTime());
+
+        Reservation reservation = reservationMapper.reservationRequestToReservetion(reservationRequest);
+
+
+        if (carStatus) {
+            reservation.setStatus(ReservationStatus.CREATED);
+        } else {
+            throw new BadRequestException(ErrorMessage.CAR_NOT_AVAILABLE_MESSAGE);
+        }
+
+        reservation.setCar(car);
+        reservation.setUser(user);
+
+        Double totalPrice = getTotalPrice(car, reservationRequest.getPickUpTime(), reservationRequest.getDropOfTime());
+
+        reservation.setTotalPrice(totalPrice);
+
+        reservationRepository.save(reservation);
 
     }
 
@@ -50,9 +75,24 @@ public class ReservationService {
     }
 
     //!!! Är fordonet tillgängligt?
+    private boolean checkCarAvailability(Car car, LocalDateTime pickUpTime,
+                                         LocalDateTime dropOfTime) {
 
+        List<Reservation> existReservations = getConflictReservation(car, pickUpTime, dropOfTime);
+
+        return existReservations.isEmpty();
+
+    }
 
     // !!! prisberäkning
+    private Double getTotalPrice(Car car, LocalDateTime pickUpTime,
+                                 LocalDateTime dropOfTime) {
+        Long minutes = ChronoUnit.MINUTES.between(pickUpTime, dropOfTime);
+        double hours = Math.ceil(minutes / 60.0);
+
+        return car.getPricePerHour() * hours;
+
+    }
 
     // !!! connflict?
     private List<Reservation> getConflictReservation(Car car, LocalDateTime pickUpTime,
