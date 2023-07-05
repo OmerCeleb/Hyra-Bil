@@ -13,6 +13,7 @@ public class ErrorMessage {
     public final static String IMAGE_NOT_FOUND_MESSAGE = "Bildfil med id %s hittades inte";
     public final static String IMAGE_USED_MESSAGE = "Bildfilen använde en annan bil";
     public final static String RESERVATION_TIME_INCORRECT_MESSAGE = "Bokningstid för hämtning eller avgångstid är inte korrekt";
+    public final static String RESERVATION_STATUS_CANT_CHANGE_MESSAGE = "Bokning kan inte uppdateras för avbokningar eller gjorda bokningar";
     public final static String CAR_NOT_AVAILABLE_MESSAGE = "Bilen är inte tillgänglig under den valda tiden";
 
 }

@@ -134,7 +134,49 @@ public class ReservationService {
 
     public void updateReservation(Long reservationId, Car car, ReservationUpdateRequest reservationUpdateRequest) {
 
+        Reservation reservation = reservationRepository.getById(reservationId);
 
+        //Om bokningsstatusen är annullerad eller klar kan du inte uppdatera.
+        if (reservation.getStatus().equals(ReservationStatus.CANCELED) ||
+                reservation.getStatus().equals(ReservationStatus.DONE)) {
+            throw new BadRequestException(ErrorMessage.RESERVATION_STATUS_CANT_CHANGE_MESSAGE);
+        }
+
+        // !!!Om reservationen kommer att uppdateras och statusen inte kommer att uppdateras,
+        // bör pickUpTime och dropOfTime inte kontrolleras.
+        if (reservationUpdateRequest.getStatus() != null &&
+                reservationUpdateRequest.getStatus() == ReservationStatus.CREATED) {
+
+            checkReservationTimeIsCorrect(reservationUpdateRequest.getPickUpTime(),
+                    reservationUpdateRequest.getDropOfTime());
+
+            //!!! Conflict kontroll
+            List<Reservation> conflictReservations = getConflictReservation(
+                    car, reservationUpdateRequest.getPickUpTime(),
+                    reservationUpdateRequest.getDropOfTime());
+
+
+            if (!conflictReservations.isEmpty()) {
+                if (!(conflictReservations.size() == 1 &&
+                        conflictReservations.get(0).getId().equals(reservationId))) {
+                    throw new BadRequestException((ErrorMessage.CAR_NOT_AVAILABLE_MESSAGE));
+                }
+            }
+
+            // pris beräknad
+            Double totalPrice = getTotalPrice(car, reservationUpdateRequest.getPickUpTime(), reservationUpdateRequest.getDropOfTime());
+
+            reservation.setTotalPrice(totalPrice);
+            reservation.setCar(car);
+        }
+
+        reservation.setPickUpTime(reservationUpdateRequest.getPickUpTime());
+        reservation.setDropOfTime(reservationUpdateRequest.getDropOfTime());
+        reservation.setPickUpLocation(reservationUpdateRequest.getPickUpLocation());
+        reservation.setDropOfTime(reservationUpdateRequest.getDropOfTime());
+        reservation.setStatus(reservationUpdateRequest.getStatus());
+
+        reservationRepository.save(reservation);
 
     }
 
