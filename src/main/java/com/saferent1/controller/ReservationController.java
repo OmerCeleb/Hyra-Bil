@@ -198,5 +198,55 @@ public class ReservationController {
         return ResponseEntity.ok(reservationDTOS);
     }
 
+    //****************************************************************************************'''''''
+    //!!! Kund eller administratör bör ta med sin egen bokningsinformation
+    @GetMapping("/{id}/auth")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
+    public ResponseEntity<ReservationDTO> getUserReservationById(@PathVariable Long id) {
+
+        User user = userService.getCurrentUser();
+        ReservationDTO reservationDTO = reservationService.findByIdAndUser(id, user);
+
+        return ResponseEntity.ok(reservationDTO);
+    }
+
+    //****************************************************************************************'''''''
+    //!!! getAllReservations
+    @GetMapping("/auth/all")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
+    public ResponseEntity<Page<ReservationDTO>> getAllUserReservations(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sort") String prop,
+            @RequestParam(value = "direction",
+                    required = false,
+                    defaultValue = "DESC") Sort.Direction direction
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, prop));
+
+        User user = userService.getCurrentUser();
+
+        Page<ReservationDTO> reservationDTOS =
+                reservationService.findReservationPageByuser(user, pageable);
+
+        return ResponseEntity.ok(reservationDTOS);
+
+    }
+
+    //****************************************************************************************'''''''
+    //deleteReservation
+    @DeleteMapping("/admin/{id}/auth")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SfResponse> deleteReservation(@PathVariable Long id) {
+
+        reservationService.removeById(id);
+
+        SfResponse response =
+                new SfResponse(ResponseMessage.RESERVATION_DELETED_RESPONSE_MESSAGE, true);
+
+        return ResponseEntity.ok(response);
+
+    }
+
 
 }
