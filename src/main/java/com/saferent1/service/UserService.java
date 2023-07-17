@@ -31,7 +31,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ReservationService reservationService;
-
     private final UserMapper userMapper;
     private final RoleService roleService;
 
