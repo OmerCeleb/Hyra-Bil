@@ -29,16 +29,18 @@ import java.util.Set;
 public class UserService {
 
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final ReservationService reservationService;
 
-    private UserMapper userMapper;
-    private RoleService roleService;
+    private final UserMapper userMapper;
+    private final RoleService roleService;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RoleService roleService,
+    public UserService(UserRepository userRepository, ReservationService reservationService, RoleService roleService,
                        @Lazy PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.reservationService = reservationService;
         this.userMapper = userMapper;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
@@ -277,6 +279,13 @@ public class UserService {
         //!!!builtIn?
         if (user.getBuiltIn()) {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
+        }
+
+        //!!! reservation kontrol
+
+        boolean exist = reservationService.existByUser(user);
+        if (exist) {
+            throw new BadRequestException(ErrorMessage.USER_CANT_BE_DELETED_MESSAGE);
         }
 
         userRepository.deleteById(id);

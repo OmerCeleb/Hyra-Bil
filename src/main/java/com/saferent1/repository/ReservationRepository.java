@@ -1,6 +1,7 @@
 package com.saferent1.repository;
 
 import ch.qos.logback.core.read.ListAppender;
+import com.saferent1.domain.Car;
 import com.saferent1.domain.Reservation;
 import com.saferent1.domain.User;
 import com.saferent1.domain.enums.ReservationStatus;
@@ -22,9 +23,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r " +
             "JOIN FETCH Car c on r.car=c.id WHERE " +
-            "c.id=:carId and (r.status not in :status) and : pickUpTime BETWEEN r.pickUpTime and r.dropOfTime " +
+            "c.id=:carId and (r.status not in :status) and :pickUpTime BETWEEN r.pickUpTime and r.dropOfTime " +
             "or " +
-            "c.id=:carId and (r.status not in :status) and : dropOfTime BETWEEN r.pickUpTime and r.dropOfTime " +
+            "c.id=:carId and (r.status not in :status) and :dropOfTime BETWEEN r.pickUpTime and r.dropOfTime " +
             "or " +
             "c.id=:carId and (r.status not in :status) and (r.pickUpTime BETWEEN :pickUpTime and :dropOfTime)")
     List<Reservation> checkCarStatus(@Param("carId") Long carId,
@@ -37,7 +38,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAll();
 
     @EntityGraph(attributePaths = {"car", "car.image"})
-    Page<Reservation> findAll(Pageable page);
+    Page<Reservation> findAll(Pageable pageable);
 
     @EntityGraph(attributePaths = {"car", "car.image", "user"})
     Optional<Reservation> findById(Long id);
@@ -47,4 +48,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @EntityGraph(attributePaths = {"car", "car.image", "user"})
     Optional<Reservation> finByIdAndUser(Long id, User user);
+
+    boolean existsByCar(Car car);
+
+    boolean existsByUser(User user);
+
+    @EntityGraph(attributePaths = {"car", "user"})
+    List<Reservation> findAllBy();
 }

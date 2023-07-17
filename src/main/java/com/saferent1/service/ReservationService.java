@@ -227,4 +227,16 @@ public class ReservationService {
 
         reservationRepository.deleteById(id);
     }
+
+    public boolean existByCar(Car car) {
+
+        return reservationRepository.existsByCar(car);
+
+    }
+
+
+    public boolean existByUser(User user) {
+
+        return reservationRepository.existsByUser(user);
+    }
 }

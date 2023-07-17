@@ -23,11 +23,13 @@ public class CarService {
     private final CarRepository carRepository;
 
     private final ImageFileService imageFileService;
+    private final ReservationService reservationService;
     private final CarMapper carMapper;
 
-    public CarService(CarRepository carRepository, ImageFileService imageFileService, CarMapper carMapper) {
+    public CarService(CarRepository carRepository, ImageFileService imageFileService, ReservationService reservationService, CarMapper carMapper) {
         this.carRepository = carRepository;
         this.imageFileService = imageFileService;
+        this.reservationService = reservationService;
         this.carMapper = carMapper;
     }
 
@@ -136,8 +138,12 @@ public class CarService {
             throw new BadRequestException(ErrorMessage.NOT_PERMITTED_METHOD_MESSAGE);
         }
 
+        //!!! reservation kontrol
         carRepository.delete(car);
-
+        boolean exist = reservationService.existByCar(car);
+        if (exist) {
+            throw new BadRequestException(ErrorMessage.CAR_USED_BY_RESERVATION_MESSAGE);
+        }
 
     }
 
