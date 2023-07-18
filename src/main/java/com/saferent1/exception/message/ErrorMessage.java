@@ -17,5 +17,6 @@ public class ErrorMessage {
     public final static String RESERVATION_STATUS_CANT_CHANGE_MESSAGE = "Bokning kan inte uppdateras för avbokningar eller gjorda bokningar";
     public final static String CAR_NOT_AVAILABLE_MESSAGE = "Bilen är inte tillgänglig under den valda tiden";
     public final static String CAR_USED_BY_RESERVATION_MESSAGE = "Bilen kunde inte raderas, bilen används av reservation";
+    public final static String EXCEL_REPORT_ERROR_MESSAGE = "Ett fel uppstod när excel-rapporten skapades";
 
 }

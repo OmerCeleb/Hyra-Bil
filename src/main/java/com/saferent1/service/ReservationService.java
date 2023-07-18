@@ -239,4 +239,9 @@ public class ReservationService {
 
         return reservationRepository.existsByUser(user);
     }
+
+    public List<Reservation> getReservations() {
+
+        return reservationRepository.findAll();
+    }
 }

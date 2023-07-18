@@ -153,4 +153,9 @@ public class CarService {
                 String.format(ErrorMessage.RESOURCE_NOT_FOUND_EXCEPTION, carId)));
 
     }
+
+
+    public List<Car> getCars() {
+        return carRepository.getAllBy();
+    }
 }
