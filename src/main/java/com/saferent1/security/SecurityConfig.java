@@ -4,6 +4,7 @@ import com.saferent1.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration // Låt oss berätta för springboot att det är config-klassen
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -31,7 +34,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable().
                 sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
-                and().
+                and().// Cors islemlerinde delete gibi islemlerde meydana gelen sorunu ortadan kaldirmask icin alttaki satir eklendi
+                authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().and().
                 authorizeRequests().
                 antMatchers("/login",
                         "/register",
@@ -46,6 +50,24 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    //*************** cors inställnignar ****************************
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("*"). //"http:127.0.0.1/8080 diye spesific adresden gelenleri kabul et diye de diyebiliriz
+                        allowedHeaders("*").
+                        allowedMethods("*");
+            }
+        };
+    }
+
+
+
+
 
     // !!! Encoder
     @Bean
@@ -76,5 +98,6 @@ public class SecurityConfig {
     public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter();
     }
+
 
 }

@@ -116,12 +116,12 @@ public class CarService {
         car.setAirCondition(carDTO.getAirCondition());
         car.setBuiltIn(carDTO.getBuiltIn());
         car.setDoors(carDTO.getDoors());
-        car.setFuel(car.getFuel());
+        car.setFuel(carDTO.getFuel());
         car.setLuggage(carDTO.getLuggage());
         car.setModel(carDTO.getModel());
-        car.setPricePerHour(car.getPricePerHour());
+        car.setPricePerHour(carDTO.getPricePerHour());
         car.setSeats(carDTO.getSeats());
-        car.setTransmission(car.getTransmission());
+        car.setTransmission(carDTO.getTransmission());
 
         car.getImage().add(imageFile);
 

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -62,6 +63,7 @@ public class ContactMessageController {
     //*********************************************************************************************************
     //!!! getAllContactMessages
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ContactMessageDTO>> getAllContactMessage() {
         List<ContactMessage> contactMessageList = contactMessageService.getAll();
         //mapStruct (Pojos --> DTOs)
@@ -74,6 +76,7 @@ public class ContactMessageController {
     //*********************************************************************************************************
     //!!! Pageable ( Server Side Paging - Client Side Paging )
     @GetMapping("/pages")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<ContactMessageDTO>> getAllContactMessageWithPage(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
@@ -92,6 +95,7 @@ public class ContactMessageController {
     //*********************************************************************************************************
     //!!! låt oss få det specifikt ContactMessage med en PathVariable
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ContactMessageDTO> getMessageWithPath(@PathVariable("id") Long id) {
         ContactMessage contactMessage = contactMessageService.getContactMessage(id);
         ContactMessageDTO contactMessageDTO = contactMessageMapper.contactMessageToDTO(contactMessage);
@@ -101,6 +105,7 @@ public class ContactMessageController {
 
     //!!! låt oss få det specifikt ContactMessage med en RequestParam
     @GetMapping("/request")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ContactMessageDTO> getMessageWithRequestParam(
             @RequestParam("id") Long id) {
         ContactMessage contactMessage = contactMessageService.getContactMessage(id);
@@ -110,6 +115,7 @@ public class ContactMessageController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SfResponse> deleteContactMessage(@PathVariable Long id) {
         contactMessageService.deleteContactMessage(id);
 
@@ -121,6 +127,7 @@ public class ContactMessageController {
 
     //!!! Update
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SfResponse> updateContactMessage(@PathVariable Long id,
                                                            @Valid @RequestBody ContactMessageRequest contactMessageRequest) {
 
