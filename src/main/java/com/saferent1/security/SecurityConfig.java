@@ -10,6 +10,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,11 +41,11 @@ public class SecurityConfig {
                 authorizeRequests().
                 antMatchers("/login",
                         "/register",
-                        "/",
                         "/files/download/**",
                         "/files/display/**",
                         "/car/visitors/**",
-                        "/index.html").
+                        "/contactmessage/visitors",
+                        "/actuator/info","/actuator/health").
                 permitAll().anyRequest().authenticated();
 
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -64,6 +66,33 @@ public class SecurityConfig {
             }
         };
     }
+
+//*******************SWAGGER***********************
+
+    private static final String[] AUTH_WHITE_LIST = {
+            "/v3/api-docs/**", // swagger
+            "swagger-ui.html", //swagger
+            "/swagger-ui/**", // swagger
+            "/",
+            "index.html",
+            "/images/**",
+            "/css/**",
+            "/js/**"
+    };
+
+    // yukardaki static listeyi de giriş izni veriyoruz, boiler plate
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        WebSecurityCustomizer customizer = new WebSecurityCustomizer() {
+            @Override
+            public void customize(WebSecurity web) {
+                web.ignoring().antMatchers(AUTH_WHITE_LIST);
+            }
+        };
+        return customizer;
+    }
+
+    //**************************************************************************
 
 
 

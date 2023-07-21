@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.saferent1</groupId>
     <artifactId>saferent1</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>saferent1</name>
     <description>Car Rental Backend Project</description>
     <properties>
